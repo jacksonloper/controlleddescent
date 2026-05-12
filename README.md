@@ -4,7 +4,7 @@ Parametric OpenSCAD model for a compact, one-piece friction pulley assembly size
 
 ## Files
 
-- `/home/runner/work/controlleddescent/controlleddescent/friction_pulley.scad` — parametric CAD source
+- `friction_pulley.scad` — parametric CAD source
 
 ## Design summary
 
@@ -21,7 +21,7 @@ Units in the OpenSCAD file are millimeters, with inch-based design inputs conver
 
 ## Usage
 
-Open `/home/runner/work/controlleddescent/controlleddescent/friction_pulley.scad` in OpenSCAD, adjust the top-level parameters if needed, then render and export STL/3MF.
+Open `friction_pulley.scad` in OpenSCAD, adjust the top-level parameters if needed, then render and export STL/3MF.
 
 ## Safety note
 
