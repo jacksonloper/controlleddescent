@@ -5,6 +5,15 @@ Parametric OpenSCAD model for a compact, one-piece friction pulley assembly size
 ## Files
 
 - `friction_pulley.scad` — parametric CAD source
+- `renders/friction_pulley_isometric.png` — isometric render
+- `renders/friction_pulley_front.png` — front render
+- `renders/friction_pulley_top.png` — top render
+
+## Renders
+
+| Isometric | Front | Top |
+| --- | --- | --- |
+| ![Isometric render](renders/friction_pulley_isometric.png) | ![Front render](renders/friction_pulley_front.png) | ![Top render](renders/friction_pulley_top.png) |
 
 ## Design summary
 
