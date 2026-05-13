@@ -1,9 +1,18 @@
-import { OrbitControls } from '@react-three/drei'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, extend, useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import { ExtrudeGeometry, LatheGeometry, Shape, Vector2 } from 'three'
+import { OrbitControls as ThreeOrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import type { Group } from 'three'
+import type { ThreeElement } from '@react-three/fiber'
 import type { PartSpec } from '../parts'
+
+extend({ OrbitControls: ThreeOrbitControls })
+
+declare module '@react-three/fiber' {
+  interface ThreeElements {
+    orbitControls: ThreeElement<typeof ThreeOrbitControls>
+  }
+}
 
 function buildProfile(spec: PartSpec) {
   let offset = 0
@@ -107,6 +116,25 @@ function IntegratedSheavePlateMesh({ spec }: { spec: PartSpec }) {
   )
 }
 
+function CameraControls() {
+  const controls = useRef<ThreeOrbitControls>(null)
+  const { camera, gl } = useThree()
+
+  useFrame(() => {
+    controls.current?.update()
+  })
+
+  return (
+    <orbitControls
+      ref={controls}
+      args={[camera, gl.domElement]}
+      enablePan={false}
+      minDistance={24}
+      maxDistance={70}
+    />
+  )
+}
+
 export function PartViewer({ spec }: { spec: PartSpec }) {
   return (
     <div className="viewer-shell">
@@ -122,7 +150,7 @@ export function PartViewer({ spec }: { spec: PartSpec }) {
         />
         <pointLight position={[-18, 10, -18]} intensity={0.35} />
         <IntegratedSheavePlateMesh spec={spec} />
-        <OrbitControls enablePan={false} minDistance={24} maxDistance={70} />
+        <CameraControls />
       </Canvas>
     </div>
   )

@@ -1,6 +1,12 @@
+import { Suspense, lazy } from 'react'
 import './App.css'
-import { PartViewer } from './components/PartViewer'
 import { integratedSheavePlate, totalProfileLengthMm } from './parts'
+
+const PartViewer = lazy(async () => {
+  const module = await import('./components/PartViewer')
+
+  return { default: module.PartViewer }
+})
 
 const highlightedMetrics = [
   { label: 'Profile steps', value: `${integratedSheavePlate.profile.length}` },
@@ -28,7 +34,9 @@ function App() {
             ))}
           </div>
         </div>
-        <PartViewer spec={integratedSheavePlate} />
+        <Suspense fallback={<div className="viewer-shell viewer-fallback">Loading viewer…</div>}>
+          <PartViewer spec={integratedSheavePlate} />
+        </Suspense>
       </section>
 
       <section className="content-grid">

@@ -35,6 +35,12 @@
   overflow: hidden;
 }
 
+.viewer-fallback {
+  display: grid;
+  place-items: center;
+  color: #94a3b8;
+}
+
 .eyebrow,
 .section-tag {
   margin: 0 0 0.75rem;
