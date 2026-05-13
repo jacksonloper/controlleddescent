@@ -4,12 +4,9 @@ export type ProfileSegment = {
   label: string
 }
 
-export type PlateSpec = {
-  widthMm: number
-  heightMm: number
-  thicknessMm: number
+export type FlangeHoleSpec = {
   holeDiameterMm: number
-  holeSpacingMm: number
+  radialOffsetMm: number
 }
 
 export type PartSpec = {
@@ -18,31 +15,30 @@ export type PartSpec = {
   summary: string
   operation: string
   profile: ProfileSegment[]
-  plate: PlateSpec
+  outerDiameterMm: number
+  flangeHoles: FlangeHoleSpec
 }
 
 export const integratedSheavePlate: PartSpec = {
   id: 'integrated-sheave-plate',
   name: 'Integrated sheave plate',
   summary:
-    'A single printed body that combines a stepped sheave, a one-inch 4 mm shaft section, and a fastening plate.',
+    'A single printed body with two outer flanges, two rope grooves, and a one-inch 4 mm center section.',
   operation:
-    'Rope rides in the two 5 mm grooves while the 4 mm shaft section keys the part into the rest of the mechanism and the plate provides a bolt-on mounting face.',
+    'This viewer shows the OpenSCAD form directly so you can inspect the stepped profile and the M4 clearance holes cut through the two outer flanges.',
   profile: [
-    { diameterMm: 20, lengthMm: 4, label: 'Outer cheek' },
+    { diameterMm: 20, lengthMm: 4, label: 'Outer flange' },
     { diameterMm: 5, lengthMm: 8, label: 'Rope groove' },
-    { diameterMm: 20, lengthMm: 4, label: 'Inner cheek' },
-    { diameterMm: 4, lengthMm: 25.4, label: 'Integrated shaft' },
-    { diameterMm: 20, lengthMm: 4, label: 'Inner cheek' },
+    { diameterMm: 20, lengthMm: 4, label: 'Inner flange' },
+    { diameterMm: 4, lengthMm: 25.4, label: 'Center section' },
+    { diameterMm: 20, lengthMm: 4, label: 'Inner flange' },
     { diameterMm: 5, lengthMm: 8, label: 'Rope groove' },
-    { diameterMm: 20, lengthMm: 4, label: 'Outer cheek' },
+    { diameterMm: 20, lengthMm: 4, label: 'Outer flange' },
   ],
-  plate: {
-    widthMm: 42,
-    heightMm: 28,
-    thicknessMm: 4,
+  outerDiameterMm: 20,
+  flangeHoles: {
     holeDiameterMm: 4.5,
-    holeSpacingMm: 26,
+    radialOffsetMm: 7,
   },
 }
 

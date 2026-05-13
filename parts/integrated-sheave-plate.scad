@@ -1,10 +1,9 @@
 $fn = 120;
 
-plate_width = 42;
-plate_height = 28;
-plate_thickness = 4;
-bolt_hole_diameter = 4.5;
-bolt_hole_spacing = 26;
+outer_flange_thickness = 4;
+flange_hole_diameter = 4.5;
+flange_hole_offset = 7;
+epsilon = 0.1;
 
 profile_points = [
   [0, -28.7],
@@ -30,19 +29,15 @@ module stepped_sheave_body() {
   polygon(points = profile_points);
 }
 
-module mounting_plate() {
-  translate([0, 0, 28.7])
-  linear_extrude(height = plate_thickness)
-  difference() {
-    square([plate_width, plate_height], center = true);
-    translate([-bolt_hole_spacing / 2, 0])
-    circle(d = bolt_hole_diameter);
-    translate([bolt_hole_spacing / 2, 0])
-    circle(d = bolt_hole_diameter);
+module outer_flange_holes(z_start) {
+  for (x = [-flange_hole_offset, flange_hole_offset]) {
+    translate([x, 0, z_start - epsilon])
+    cylinder(h = outer_flange_thickness + 2 * epsilon, d = flange_hole_diameter);
   }
 }
 
-union() {
+difference() {
   stepped_sheave_body();
-  mounting_plate();
+  outer_flange_holes(-28.7);
+  outer_flange_holes(24.7);
 }

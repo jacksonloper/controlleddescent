@@ -1,10 +1,9 @@
-import { Canvas, extend, useFrame, useThree } from '@react-three/fiber'
+import { Canvas, extend, useThree } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
-import { ExtrudeGeometry, LatheGeometry, Shape, Vector2 } from 'three'
+import { ExtrudeGeometry, Path, Shape } from 'three'
 import { OrbitControls as ThreeOrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import type { Group } from 'three'
 import type { ThreeElement } from '@react-three/fiber'
-import type { PartSpec } from '../parts'
+import type { PartSpec, ProfileSegment } from '../parts'
 
 extend({ OrbitControls: ThreeOrbitControls })
 
@@ -14,104 +13,76 @@ declare module '@react-three/fiber' {
   }
 }
 
-function buildProfile(spec: PartSpec) {
-  let offset = 0
-  const points = [new Vector2(0, 0)]
+function positionSegments(profile: ProfileSegment[]) {
+  const profileLength = profile.reduce((total, segment) => total + segment.lengthMm, 0)
+  let offset = -profileLength / 2
 
-  spec.profile.forEach((segment) => {
-    const radius = segment.diameterMm / 2
-    points.push(new Vector2(radius, offset))
+  return profile.map((segment) => {
+    const centerMm = offset + segment.lengthMm / 2
     offset += segment.lengthMm
-    points.push(new Vector2(radius, offset))
+
+    return { ...segment, centerMm }
   })
-
-  points.push(new Vector2(0, offset))
-
-  return { points, totalLength: offset }
 }
 
-function grooveCenters(spec: PartSpec, totalLength: number) {
-  let offset = 0
-  const centers: number[] = []
+function buildOuterFlangeGeometry(spec: PartSpec, thicknessMm: number) {
+  const shape = new Shape()
+  const outerRadius = spec.outerDiameterMm / 2
+  const holeRadius = spec.flangeHoles.holeDiameterMm / 2
 
-  spec.profile.forEach((segment) => {
-    if (segment.label === 'Rope groove') {
-      centers.push(offset + segment.lengthMm / 2 - totalLength / 2)
-    }
+  shape.absarc(0, 0, outerRadius, 0, Math.PI * 2, false)
 
-    offset += segment.lengthMm
+  for (const direction of [-1, 1]) {
+    const hole = new Path()
+    hole.absellipse(
+      direction * spec.flangeHoles.radialOffsetMm,
+      0,
+      holeRadius,
+      holeRadius,
+      0,
+      Math.PI * 2,
+      false,
+      0,
+    )
+    shape.holes.push(hole)
+  }
+
+  const geometry = new ExtrudeGeometry(shape, {
+    depth: thicknessMm,
+    bevelEnabled: false,
+    curveSegments: 64,
   })
 
-  return centers
+  geometry.rotateX(-Math.PI / 2)
+  geometry.translate(0, -thicknessMm / 2, 0)
+
+  return geometry
 }
 
 function IntegratedSheavePlateMesh({ spec }: { spec: PartSpec }) {
-  const group = useRef<Group>(null)
-  const { points, totalLength } = useMemo(() => buildProfile(spec), [spec])
-  const bodyGeometry = useMemo(() => {
-    const geometry = new LatheGeometry(points, 96)
-    geometry.translate(0, -totalLength / 2, 0)
-    return geometry
-  }, [points, totalLength])
-
-  const plateGeometry = useMemo(() => {
-    const shape = new Shape()
-    const halfWidth = spec.plate.widthMm / 2
-    const halfHeight = spec.plate.heightMm / 2
-    const holeRadius = spec.plate.holeDiameterMm / 2
-    const holeOffset = spec.plate.holeSpacingMm / 2
-
-    shape.moveTo(-halfWidth, -halfHeight)
-    shape.lineTo(halfWidth, -halfHeight)
-    shape.lineTo(halfWidth, halfHeight)
-    shape.lineTo(-halfWidth, halfHeight)
-    shape.closePath()
-
-    const leftHole = new Shape()
-    leftHole.absellipse(-holeOffset, 0, holeRadius, holeRadius, 0, Math.PI * 2, false, 0)
-    const rightHole = new Shape()
-    rightHole.absellipse(holeOffset, 0, holeRadius, holeRadius, 0, Math.PI * 2, false, 0)
-
-    shape.holes.push(leftHole, rightHole)
-
-    const geometry = new ExtrudeGeometry(shape, {
-      depth: spec.plate.thicknessMm,
-      bevelEnabled: false,
-      curveSegments: 48,
-    })
-
-    geometry.rotateX(-Math.PI / 2)
-    geometry.translate(0, totalLength / 2, 0)
-
-    return geometry
-  }, [spec, totalLength])
-
-  const grooves = useMemo(() => grooveCenters(spec, totalLength), [spec, totalLength])
-
-  useFrame((_, delta) => {
-    if (group.current) {
-      group.current.rotation.y += delta * 0.45
-    }
-  })
+  const segments = useMemo(() => positionSegments(spec.profile), [spec.profile])
+  const outerFlanges = segments.filter((segment) => segment.label === 'Outer flange')
+  const bodySegments = segments.filter((segment) => segment.label !== 'Outer flange')
+  const flangeGeometry = useMemo(
+    () => buildOuterFlangeGeometry(spec, outerFlanges[0]?.lengthMm ?? 4),
+    [outerFlanges, spec],
+  )
 
   return (
-    <group ref={group} rotation={[0.55, 0.75, 0]}>
-      <mesh geometry={bodyGeometry} castShadow receiveShadow>
-        <meshStandardMaterial color="#d8dee9" metalness={0.18} roughness={0.38} />
-      </mesh>
-      <mesh geometry={plateGeometry} castShadow receiveShadow>
-        <meshStandardMaterial color="#bfced9" metalness={0.08} roughness={0.52} />
-      </mesh>
-      {grooves.map((position) => (
-        <mesh key={position} position={[0, position, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[3.4, 0.5, 16, 64]} />
-          <meshStandardMaterial color="#f59e0b" roughness={0.55} metalness={0.02} />
+    <group rotation={[0.45, 0.65, 0]}>
+      {bodySegments.map((segment) => (
+        <mesh key={`${segment.label}-${segment.centerMm}`} position={[0, segment.centerMm, 0]}>
+          <cylinderGeometry
+            args={[segment.diameterMm / 2, segment.diameterMm / 2, segment.lengthMm, 96]}
+          />
+          <meshStandardMaterial color="#d6dde7" metalness={0.04} roughness={0.48} />
         </mesh>
       ))}
-      <mesh position={[0, -totalLength / 2 - 7, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[28, 64]} />
-        <shadowMaterial transparent opacity={0.25} />
-      </mesh>
+      {outerFlanges.map((segment, index) => (
+        <mesh key={`outer-flange-${index}`} geometry={flangeGeometry} position={[0, segment.centerMm, 0]}>
+          <meshStandardMaterial color="#dce3ec" metalness={0.04} roughness={0.44} />
+        </mesh>
+      ))}
     </group>
   )
 }
@@ -120,17 +91,14 @@ function CameraControls() {
   const controls = useRef<ThreeOrbitControls>(null)
   const { camera, gl } = useThree()
 
-  useFrame(() => {
-    controls.current?.update()
-  })
-
   return (
     <orbitControls
       ref={controls}
       args={[camera, gl.domElement]}
-      enablePan={false}
-      minDistance={24}
-      maxDistance={70}
+      enablePan
+      minDistance={10}
+      maxDistance={220}
+      maxPolarAngle={Math.PI}
     />
   )
 }
@@ -138,17 +106,11 @@ function CameraControls() {
 export function PartViewer({ spec }: { spec: PartSpec }) {
   return (
     <div className="viewer-shell">
-      <Canvas camera={{ position: [28, 18, 28], fov: 38 }} shadows dpr={[1, 1.5]}>
+      <Canvas camera={{ position: [52, 24, 52], fov: 34 }} dpr={[1, 1.5]}>
         <color attach="background" args={['#0b1220']} />
-        <ambientLight intensity={0.8} />
-        <directionalLight
-          castShadow
-          position={[24, 28, 18]}
-          intensity={1.4}
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-        />
-        <pointLight position={[-18, 10, -18]} intensity={0.35} />
+        <ambientLight intensity={1.1} />
+        <directionalLight position={[24, 26, 20]} intensity={1.4} />
+        <directionalLight position={[-16, -10, -22]} intensity={0.45} />
         <IntegratedSheavePlateMesh spec={spec} />
         <CameraControls />
       </Canvas>

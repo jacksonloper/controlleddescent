@@ -11,7 +11,10 @@ const PartViewer = lazy(async () => {
 const highlightedMetrics = [
   { label: 'Profile steps', value: `${integratedSheavePlate.profile.length}` },
   { label: 'Overall length', value: `${totalProfileLengthMm.toFixed(1)} mm` },
-  { label: 'Bolt clearance', value: `M4 (${integratedSheavePlate.plate.holeDiameterMm} mm)` },
+  {
+    label: 'Flange holes',
+    value: `4 × ${integratedSheavePlate.flangeHoles.holeDiameterMm} mm`,
+  },
 ]
 
 function App() {
@@ -22,8 +25,8 @@ function App() {
           <p className="eyebrow">Controlled Descent</p>
           <h1>Interactive part studies for a printed mechanism.</h1>
           <p className="lede">
-            A lightweight React, TypeScript, and Three.js site for exploring OpenSCAD parts
-            before they reach the bench.
+            A lightweight React, TypeScript, and Three.js viewer for orbiting around the
+            current OpenSCAD part and checking its proportions.
           </p>
           <div className="metric-grid">
             {highlightedMetrics.map((metric) => (
@@ -70,17 +73,17 @@ function App() {
             <div>
               <h3>Design checks</h3>
               <ul>
-                <li>Validate the stepped turning profile before printing.</li>
-                <li>Confirm the two rope grooves sit between the 20 mm cheeks.</li>
-                <li>Inspect the bolt plate footprint and M4 clearance spacing.</li>
+                <li>Validate the stepped lathed profile before printing.</li>
+                <li>Inspect the one-inch 4 mm center section between the two inner flanges.</li>
+                <li>Confirm the M4 clearance holes land in both outer flanges.</li>
               </ul>
             </div>
             <div>
-              <h3>Next additions</h3>
+              <h3>Viewer focus</h3>
               <ul>
-                <li>Add more OpenSCAD parts beside this first integrated sheave plate.</li>
-                <li>Introduce motion studies for rope path, fasteners, and mating parts.</li>
-                <li>Keep Netlify deploys simple with a static Vite build.</li>
+                <li>Orbit, pan, and zoom the current OpenSCAD form without automatic motion.</li>
+                <li>Keep the scene stripped back so the geometry reads clearly.</li>
+                <li>Add more parts later once this first shape is represented accurately.</li>
               </ul>
             </div>
           </div>
