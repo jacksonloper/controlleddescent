@@ -1,8 +1,13 @@
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import './App.css'
 
-import { PartScene } from './components/PartScene'
 import { defaultPartId, partCatalog, type PartId } from './data/parts'
+
+const PartScene = lazy(async () => {
+  const module = await import('./components/PartScene')
+
+  return { default: module.PartScene }
+})
 
 function App() {
   const [activePartId, setActivePartId] = useState<PartId>(defaultPartId)
@@ -60,7 +65,15 @@ function App() {
             </a>
           </div>
           <p className="part-summary">{activePart.summary}</p>
-          <PartScene activePart={activePart.id} />
+          <Suspense
+            fallback={
+              <div className="viewer-shell viewer-loading" role="status">
+                Loading viewer…
+              </div>
+            }
+          >
+            <PartScene activePart={activePart.id} />
+          </Suspense>
         </section>
       </section>
 

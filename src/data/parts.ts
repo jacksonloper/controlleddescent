@@ -125,7 +125,7 @@ export const partCatalog: PartSpec[] = [
       },
       {
         label: 'Cheek bolts',
-        value: `${housingDimensions.boltHoleRadius * 2} mm clearance radius`,
+        value: `⌀${(housingDimensions.boltHoleRadius * 2).toFixed(1)} mm clearance`,
       },
     ],
     scadSource: pulleyHousingScadSource,

@@ -168,7 +168,7 @@ const createHousingGeometry = () => {
 }
 
 function SpoolModel() {
-  const geometry = useMemo(createSpoolGeometry, [])
+  const geometry = useMemo(() => createSpoolGeometry(), [])
 
   return (
     <mesh geometry={geometry} material={accentMaterial} castShadow receiveShadow />
@@ -232,7 +232,7 @@ function ShaftModel() {
 }
 
 function HousingModel() {
-  const geometry = useMemo(createHousingGeometry, [])
+  const geometry = useMemo(() => createHousingGeometry(), [])
 
   return (
     <mesh geometry={geometry} material={defaultMaterial} castShadow receiveShadow />

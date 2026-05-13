@@ -133,6 +133,12 @@
   background: linear-gradient(180deg, #0b1020 0%, #10182d 100%);
 }
 
+.viewer-loading {
+  display: grid;
+  place-items: center;
+  color: #dbeafe;
+}
+
 .details-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
