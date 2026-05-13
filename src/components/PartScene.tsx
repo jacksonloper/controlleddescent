@@ -49,6 +49,10 @@ const createCylinderMesh = (radius: number, length: number) => {
 const unionMeshes = (meshes: THREE.Mesh[]) => {
   const [firstMesh, ...restMeshes] = meshes
 
+  if (!firstMesh) {
+    throw new Error('At least one mesh is required for CSG union operations.')
+  }
+
   return restMeshes.reduce((combinedMesh, mesh) => CSG.union(combinedMesh, mesh), firstMesh)
 }
 
