@@ -1,11 +1,13 @@
 import pulleyHousingScadSource from '../assets/scad/pulley-housing.scad?raw'
 import pulleyHousingScadUrl from '../assets/scad/pulley-housing.scad?url'
+import assemblyScadSource from '../assets/scad/assembly.scad?raw'
+import assemblyScadUrl from '../assets/scad/assembly.scad?url'
 import shaftScadSource from '../assets/scad/shaft.scad?raw'
 import shaftScadUrl from '../assets/scad/shaft.scad?url'
 import spoolScadSource from '../assets/scad/spool.scad?raw'
 import spoolScadUrl from '../assets/scad/spool.scad?url'
 
-export type PartId = 'spool' | 'shaft' | 'housing'
+export type PartId = 'spool' | 'shaft' | 'housing' | 'assembly'
 
 export type PartSpec = {
   id: PartId
@@ -46,7 +48,7 @@ export const housingDimensions = {
   eyeCenterY: 48,
   boltHoleRadius: 2.2,
   boltHoleSpacing: 56,
-  upperBoltY: -42,
+  upperBoltY: 22,
 } as const
 
 const lowerBoltY =
@@ -107,7 +109,7 @@ export const partCatalog: PartSpec[] = [
       'A two-cheek housing with a top hook eye, shaft clearance holes, and two M4 mounting holes per cheek spaced 56 mm apart.',
     assumptions: [
       'The cheek spacing provides 1 mm of side clearance around the 38 mm-wide spool assembly.',
-      'The upper M4 mounting hole starts 42 mm below the shaft center so fasteners stay clear of the 30 mm spool flanges.',
+      'Each cheek is drilled in the order M4 hole, shaft hole, M4 hole so the shaft passes between the two bolt holes.',
     ],
     dimensions: [
       { label: 'Inner cheek gap', value: `${housingDimensions.innerGap} mm` },
@@ -120,6 +122,10 @@ export const partCatalog: PartSpec[] = [
         value: `${housingDimensions.boltHoleSpacing} mm center to center`,
       },
       {
+        label: 'Upper M4 hole center',
+        value: `${housingDimensions.upperBoltY} mm from shaft centerline`,
+      },
+      {
         label: 'Hook eye',
         value: `⌀${housingDimensions.eyeInnerRadius * 2} mm opening`,
       },
@@ -130,6 +136,32 @@ export const partCatalog: PartSpec[] = [
     ],
     scadSource: pulleyHousingScadSource,
     scadUrl: pulleyHousingScadUrl,
+  },
+  {
+    id: 'assembly',
+    name: 'Full assembly',
+    summary:
+      'The spool, shaft, and pulley housing fitted together, with each part colored separately for a final fit check.',
+    assumptions: [
+      'The spool stays centered on the square section while the round shaft ends pass through the cheek clearance holes.',
+      'The housing view reuses the same cheek layout, so the shaft sits between the two M4 holes on each side.',
+    ],
+    dimensions: [
+      {
+        label: 'Assembly width',
+        value: `${housingDimensions.innerGap + housingDimensions.cheekThickness * 2} mm overall`,
+      },
+      {
+        label: 'Spool fit gap',
+        value: `${housingDimensions.innerGap - (spoolDimensions.barrelLength + spoolDimensions.flangeThickness * 2)} mm total side clearance`,
+      },
+      {
+        label: 'Shaft support span',
+        value: `${shaftDimensions.roundLength * 2 + shaftDimensions.squareLength} mm overall shaft length`,
+      },
+    ],
+    scadSource: assemblyScadSource,
+    scadUrl: assemblyScadUrl,
   },
 ]
 

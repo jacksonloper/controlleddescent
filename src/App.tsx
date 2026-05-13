@@ -26,7 +26,7 @@ function App() {
           <h1>Contraption parts viewer</h1>
           <p className="hero-copy">
             Lightweight React + Three.js sketches backed by OpenSCAD source for
-            early spool, shaft, and pulley housing concepts.
+            early spool, shaft, pulley housing, and assembled fit-check concepts.
           </p>
         </div>
         <div className="hero-notes">
@@ -34,7 +34,7 @@ function App() {
           <ul>
             <li>Keep each part printable and easy to inspect with orbit controls.</li>
             <li>Preserve OpenSCAD as the editable source of truth for each part.</li>
-            <li>Track clearances so the housing hardware does not clash with the spool.</li>
+            <li>Show the final fitted assembly with distinct colors for each printed part.</li>
           </ul>
         </div>
       </section>

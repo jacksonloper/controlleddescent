@@ -198,7 +198,7 @@ function ShaftModel() {
           0,
         ]}
         rotation={[0, 0, Math.PI / 2]}
-        material={defaultMaterial}
+        material={helperMaterial}
         castShadow
         receiveShadow
       >
@@ -218,7 +218,7 @@ function ShaftModel() {
           0,
         ]}
         rotation={[0, 0, Math.PI / 2]}
-        material={defaultMaterial}
+        material={helperMaterial}
         castShadow
         receiveShadow
       >
@@ -243,6 +243,16 @@ function HousingModel() {
   )
 }
 
+function AssemblyModel() {
+  return (
+    <group>
+      <HousingModel />
+      <ShaftModel />
+      <SpoolModel />
+    </group>
+  )
+}
+
 function SceneContents({ activePart }: { activePart: PartId }) {
   return (
     <>
@@ -262,6 +272,7 @@ function SceneContents({ activePart }: { activePart: PartId }) {
         {activePart === 'spool' ? <SpoolModel /> : null}
         {activePart === 'shaft' ? <ShaftModel /> : null}
         {activePart === 'housing' ? <HousingModel /> : null}
+        {activePart === 'assembly' ? <AssemblyModel /> : null}
       </group>
       <OrbitControls enablePan enableZoom maxDistance={260} minDistance={40} />
     </>

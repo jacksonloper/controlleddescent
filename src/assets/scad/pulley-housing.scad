@@ -11,7 +11,7 @@ eye_inner_radius = 7;
 eye_center_y = 48;
 bolt_hole_radius = 2.2;
 bolt_hole_spacing = 56;
-upper_bolt_y = -42;
+upper_bolt_y = 22;
 
 module housing() {
   difference() {
