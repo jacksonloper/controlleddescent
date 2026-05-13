@@ -1,1 +1,26 @@
 # controlleddescent
+
+A lightweight React + TypeScript + Three.js viewer for OpenSCAD mechanism studies.
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+## Validation
+
+```bash
+npm run lint
+npm run build
+```
+
+## Deployment
+
+The repository includes a `netlify.toml` so Netlify can deploy the static Vite build directly.
+
+## Parts
+
+- `/home/runner/work/controlleddescent/controlleddescent/parts/integrated-sheave-plate.scad` defines the first showcased part.
+- The site renders a matching interactive study of the integrated sheave plate profile, shaft section, and M4 mounting plate.
