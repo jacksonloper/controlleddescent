@@ -22,5 +22,5 @@ The repository includes a `netlify.toml` so Netlify can deploy the static Vite b
 
 ## Parts
 
-- `/home/runner/work/controlleddescent/controlleddescent/parts/integrated-sheave-plate.scad` defines the first showcased part.
+- `parts/integrated-sheave-plate.scad` defines the first showcased part.
 - The site renders a matching interactive study of the integrated sheave plate profile, center section, and M4 holes in the outer flanges.
