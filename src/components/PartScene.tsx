@@ -50,7 +50,7 @@ const unionMeshes = (meshes: THREE.Mesh[]) => {
   const [firstMesh, ...restMeshes] = meshes
 
   if (!firstMesh) {
-    throw new Error('At least one mesh is required for CSG union operations.')
+    throw new Error('unionMeshes requires at least one mesh; received an empty array.')
   }
 
   return restMeshes.reduce((combinedMesh, mesh) => CSG.union(combinedMesh, mesh), firstMesh)
