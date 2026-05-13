@@ -1,6 +1,6 @@
 square_width = 12;
 square_length = 30;
-round_radius = 6;
+round_radius = 4;
 round_length = 30;
 
 module shaft() {

@@ -30,7 +30,7 @@ export const spoolDimensions = {
 export const shaftDimensions = {
   squareWidth: spoolDimensions.shaftSquare,
   squareLength: 30,
-  roundRadius: 6,
+  roundRadius: 4,
   roundLength: 30,
 } as const
 
@@ -39,8 +39,8 @@ export const housingDimensions = {
   cheekDepth: 22,
   innerGap: spoolDimensions.barrelLength + spoolDimensions.flangeThickness * 2 + 2,
   cheekBottomY: -112,
-  shaftClearanceRadius: shaftDimensions.roundRadius + 0.6,
-  topBridgeY: 28,
+  shaftClearanceRadius: 5,
+  topBridgeY: 38,
   topBridgeHeight: 12,
   topBridgeDepth: 14,
   eyeOuterRadius: 18,
@@ -83,7 +83,7 @@ export const partCatalog: PartSpec[] = [
       'A 30 mm square drive section transitions to 30 mm round rods on both sides so the spool can key to the center and spin in the housing.',
     assumptions: [
       'The square section is centered so the spool sits evenly between the round bearing journals.',
-      'Round shaft ends use a 6 mm radius so the housing hole can clear them with a small print-friendly allowance.',
+      'Round shaft ends are ⌀8 mm so they fit inside 10 mm bushing bores in the housing cheeks.',
     ],
     dimensions: [
       {
@@ -109,13 +109,15 @@ export const partCatalog: PartSpec[] = [
       'A two-cheek housing with a top hook eye, shaft clearance holes, and two M4 mounting holes per cheek spaced 56 mm apart.',
     assumptions: [
       'The cheek spacing provides 1 mm of side clearance around the 38 mm-wide spool assembly.',
-      'Each cheek is drilled in the order M4 hole, shaft hole, M4 hole so the shaft passes between the two bolt holes.',
+      'Each cheek is drilled M4 hole, shaft hole, M4 hole so the shaft passes between the two bolt holes.',
+      'Cheek shaft holes are ⌀10 mm to accept standard bushings; the ⌀8 mm shaft journals sit inside the bushings.',
+      'Bridge bottom is 2 mm above the spool flange radius (30 mm) to keep the spool clear of the bridge.',
     ],
     dimensions: [
       { label: 'Inner cheek gap', value: `${housingDimensions.innerGap} mm` },
       {
-        label: 'Shaft clearance',
-        value: `⌀${(housingDimensions.shaftClearanceRadius * 2).toFixed(1)} mm`,
+        label: 'Shaft clearance hole',
+        value: `⌀${housingDimensions.shaftClearanceRadius * 2} mm (for bushing)`,
       },
       {
         label: 'M4 hole spacing',

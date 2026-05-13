@@ -268,7 +268,7 @@ function SceneContents({ activePart }: { activePart: PartId }) {
       <directionalLight intensity={0.9} position={[-70, 35, -75]} />
       <gridHelper args={[220, 22, '#2f5fbf', '#24304d']} position={[0, -70, 0]} />
       <axesHelper args={[45]} />
-      <group rotation={[-0.25, 0.75, 0]}>
+      <group>
         {activePart === 'spool' ? <SpoolModel /> : null}
         {activePart === 'shaft' ? <ShaftModel /> : null}
         {activePart === 'housing' ? <HousingModel /> : null}
